@@ -1,0 +1,10 @@
+---
+title: "Viz part 1"
+author: "Mia Yu"
+date: "2023-10-01"
+output: github_document
+---
+
+```{r, include=FALSE}
+
+```
