@@ -8,6 +8,12 @@ output: github_document
 ```{r, include=FALSE}
 library(tidyverse)
 library(ggridges)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
 ```
 
 Get the data plotting today.
@@ -28,4 +34,143 @@ weather_df =
     tmin = tmin / 10,
     tmax = tmax / 10) |>
   select(name, id, everything())
+```
+
+
+Let's make a plot!
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+Pipes and stuff
+
+```{r}
+weather_df |>
+  filter(name == "CentralPark_NY") |>
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+
+
+ggp_nyc_weather = 
+  weather_df |>
+  filter(name == "CentralPark_NY") |>
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+
+ggp_nyc_weather 
+
+```
+
+## Fancy plot
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax, color = name)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(weather_df, aes(x = tmin, y = tmax)) +
+  geom_point(aes(color = name), alpha = 0.3) +
+  geom_smooth(se = FALSE)
+```
+
+Plot with facets
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .3) +
+  geom_smooth()+
+  facet_grid(. ~ name)
+
+## organized in alphabet order
+```
+
+Let's try a different plot. temps are boring
+
+```{r}
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) +
+  geom_point( aes(size = prcp), alpha = .3) +
+  geom_smooth() +
+  facet_grid(. ~ name) 
+```
+
+try assigning a specific color
+
+```{r}
+weather_df |>
+  filter(name != "CentralPark_NY") |>
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point(alpha = .7, size = .7)
+  # geom_point(color = "blue")
+```
+
+```{r}
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex()
+```
+
+```{r}
+weather_df |>
+  filter(name == "Molokai_HI") |>
+  ggplot(aes(x = date, y = tmax)) +
+  geom_line(alpha = .5) +
+  geom_point(size = .5)
+```
+
+## univariate plotting
+
+histogram
+
+```{r}
+ggplot(weather_df, aes(x = tmax, fill = name)) +
+  geom_histogram()
+  # geom_histogram(position = "dodge") but often use ->
+```
+
+Let's use a density plot
+
+```{r}
+ggplot(weather_df, aes(x = tmax, fill = name)) +
+  geom_density(alpha = .3, adjust = .75)
+# check the parameter
+```
+
+using boxplots!!!
+
+```{r}
+ggplot(weather_df, aes(y = tmax, x = name)) +
+  geom_boxplot()
+```
+
+violin plots?
+
+```{r}
+ggplot(weather_df, aes(y = tmax, x = name)) +
+  geom_violin()
+```
+
+ridge plot
+
+```{r}
+ggplot(weather_df, aes(x = tmax, y = name)) +
+  geom_density_ridges()
+```
+
+## saving and embedding plots
+
+```{r}
+ggp_weather = 
+  weather_df |>
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+
+ggp_weather
+
+ggsave("results/ggp_weather.pdf", ggp_weather)
+
+```
+
+```{r, fig.width= 12, fig.asp= .6}
+ggp_weather
 ```
